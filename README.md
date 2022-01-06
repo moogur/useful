@@ -10,3 +10,7 @@
 ### Задачки
 
 1. [Про типам в typescript](https://github.com/type-challenges/type-challenges)
+
+### Подкасты
+
+1. [Рускоязычные ИТ-подкасты](https://github.com/unchase/awesome-russian-it/blob/master/Podcasts.md)
