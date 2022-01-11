@@ -4,8 +4,9 @@
 
 ---
 
-1. [Алгоритмы и структуры данных на JavaScript](https://github.com/trekhleb/javascript-algorithms/blob/master/README.ru-RU.md)
-2. [33 js concept](https://github.com/gumennii/33-js-concepts/blob/master/README.md)
+1. [JS Comparison Table](https://dorey.github.io/JavaScript-Equality-Table/)
+2. [Алгоритмы и структуры данных на JavaScript](https://github.com/trekhleb/javascript-algorithms/blob/master/README.ru-RU.md)
+3. [33 js concept](https://github.com/gumennii/33-js-concepts/blob/master/README.md)
 
 ### Задачки
 
@@ -18,6 +19,8 @@
 ### Функциональное программирование
 
 1. [Awesome FP JS](https://github.com/stoeffel/awesome-fp-js/blob/master/README.md)
+2. [Static land](https://github.com/fantasyland/static-land/blob/master/docs/spec.md)
+3. [Fantasy land](https://github.com/fantasyland/fantasy-land)
 
 ### Markdown
 
