@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/opt/homebrew/bin/bash
 
 # check commit message
 # - not empty
@@ -6,10 +6,8 @@ function checkEmpty() {
   local TYPE="$1"
   local VALUE="$2"
 
-  if [[ -z "$VALUE" ]]
-  then
+  if [[ -z "$VALUE" ]]; then
     echo "$TYPE is empty"
-    echo "value = $VALUE"
     exit 1
   fi
 }
@@ -20,8 +18,7 @@ function checkMaxLength() {
   local MAX_LENGTH="$2"
   local VALUE="$3"
 
-  if [[ "${#VALUE}" -gt "$MAX_LENGTH" ]]
-  then
+  if [[ "${#VALUE}" -gt "$MAX_LENGTH" ]]; then
     echo "$TYPE is longer than the maximum length"
     echo "value = $VALUE"
     exit 1
@@ -32,10 +29,10 @@ function checkMaxLength() {
 function checkLowercase() {
   local TYPE="$1"
   local VALUE="$2"
-  local VALUE_TO_LOWER_CASE=$(echo "$VALUE" | tr '[:upper:]' '[:lower:]')
+  local VALUE_TO_LOWER_CASE
+  VALUE_TO_LOWER_CASE=$(echo "$VALUE" | tr '[:upper:]' '[:lower:]')
 
-  if [[ "$VALUE_TO_LOWER_CASE" != "$VALUE" ]]
-  then
+  if [[ "$VALUE_TO_LOWER_CASE" != "$VALUE" ]]; then
     echo "$TYPE is not lower case"
     echo "value = $VALUE"
     exit 1
@@ -45,14 +42,12 @@ function checkLowercase() {
 # - include type
 function includeInTypes() {
   local VALUE="$1"
-  local STRING_TYPES=("feature" "bugfix" "docs" "style" "refactor" "perf" "test" "build" "revert" "ci")
+  local STRING_TYPES=(feature bugfix docs style refactor perf test build config ci)
 
-  for i in "${STRING_TYPES[@]}"
-  do
-      if [[ "$i" == "$VALUE" ]]
-      then
-          return
-      fi
+  for i in "${STRING_TYPES[@]}"; do
+    if [[ "$i" == "$VALUE" ]]; then
+      return
+    fi
   done
 
   echo "Unknown type"
@@ -60,20 +55,38 @@ function includeInTypes() {
   exit 1
 }
 
+# - validate task number
+function validateTaskNumber() {
+  local VALUE=$1
+
+  local REGEXP="^\[[A-Z]+-[0-9]+\]$"
+  if [[ ! "$VALUE" =~ $REGEXP ]]; then
+    echo "The issue number is not specified correctly"
+    echo "value = $VALUE"
+    exit 1
+  fi
+}
+
 # variables
-HEADER=$(cat "$1")
-HEADER_CHUNKS=( $(echo "$HEADER" | tr "(" "\n" | tr "): " "\n") )
+COMMIT=$(cat "$1")
+TASK_NUMBER=$(echo "$COMMIT" | awk -F' ' '{print $1}')
+TYPE=$(echo "$COMMIT" | awk -F'] ' '{print $2}' | awk -F'(' '{print $1}')
+SCOPE=$(echo "$COMMIT" | awk -F'(' '{print $2}' | awk -F')' '{print $1}')
+MESSAGE=$(echo "$COMMIT" | awk -F': ' '{print $2}')
 
 # checking
-# TYPE
-checkEmpty "TYPE" "${HEADER_CHUNKS[0]}"
-includeInTypes "${HEADER_CHUNKS[0]}"
+## TASK NUMBER
+validateTaskNumber "$TASK_NUMBER"
 
-# SCOPE
-checkEmpty "SCOPE" "${HEADER_CHUNKS[1]}"
-checkLowercase "SCOPE" "${HEADER_CHUNKS[1]}"
+## TYPE
+checkEmpty "TYPE" "$TYPE"
+includeInTypes "$TYPE"
 
-# SUBJECT
-checkEmpty "SUBJECT" "${HEADER_CHUNKS[2]}"
-checkLowercase "SUBJECT" "$HEADER"
-checkMaxLength "SUBJECT" 75 "${HEADER_CHUNKS[2]}"
+## SCOPE
+checkEmpty "SCOPE" "$SCOPE"
+checkLowercase "SCOPE" "$SCOPE"
+
+## SUBJECT
+checkEmpty "SUBJECT" "$MESSAGE"
+checkLowercase "SUBJECT" "$MESSAGE"
+checkMaxLength "SUBJECT" 75 "$MESSAGE"
